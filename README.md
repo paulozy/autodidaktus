@@ -35,10 +35,11 @@ Agora temos uma **arquitetura moderna e escalável**.
 
 Este projeto é reconstruído do zero em uma **série de 15 episódios** no YouTube.
 
-- 📺 **Canal:** [CalvoDev](https://www.youtube.com/@calvodev)
+- 📺 **Canal:** [Calvo Dev - YouTube](https://youtube.com/@CalvoDev)
 - 🔄 **Frequência:** 1-2 episódios por semana
 - ⏱️ **Duração:** ~45 min por episódio
 - 📍 **Status:** Em produção (Episódio X de 15)
+- 🔔 **Inscreva-se** para receber notificações de novos episódios!
 
 ### Episódios Planejados
 
@@ -61,12 +62,58 @@ Este projeto é reconstruído do zero em uma **série de 15 episódios** no YouT
 
 ## 🏗️ Arquitetura
 
+### Estrutura do Backend (Express + TypeScript)
+
+```
+backend/
+├── src/
+│   ├── app/
+│   │   ├── controllers/        # Controladores Express (recebem requisições)
+│   │   ├── routes/             # Rotas Express (mapeiam URLs)
+│   │   ├── entities/           # Entidades/DTOs (estrutura de dados)
+│   │   ├── usecases/           # Lógica de negócio (orquestração)
+│   │   └── middleware/         # Middlewares (autenticação, validação, logging)
+│   │
+│   ├── infra/
+│   │   ├── logging/            # Sistema de logging (Winston)
+│   │   │   ├── logger.ts       # Logger principal (singleton)
+│   │   │   ├── formats.ts      # Formatos customizados
+│   │   │   ├── levels.ts       # Níveis de log
+│   │   │   └── transports.ts   # Configuração de outputs
+│   │   │
+│   │   ├── prisma/             # Banco de dados (Prisma ORM)
+│   │   │   └── client.ts       # Cliente Prisma
+│   │   │
+│   │   ├── aws/                # Integração AWS S3
+│   │   │   └── s3-client.ts    # Cliente S3
+│   │   │
+│   │   └── github/             # Integração GitHub API
+│   │       └── github-client.ts # Cliente GitHub
+│   │
+│   ├── app.ts                  # Configuração Express
+│   ├── server.ts               # Entry point (inicia servidor)
+│   └── __tests__/              # Testes (Jest + Supertest)
+│
+├── logs/                       # Logs rotacionados (gitignored)
+├── dist/                       # Build compilado (gitignored)
+├── prisma/
+│   ├── schema.prisma           # Schema do banco
+│   └── migrations/             # Histórico de migrações
+├── Dockerfile                  # Container do backend
+├── docker-compose.yml          # Orquestração local
+├── jest.config.js              # Configuração Jest
+├── tsconfig.json               # Configuração TypeScript
+├── .env.example                # Variáveis de exemplo
+└── package.json                # Dependências e scripts
+
+```
+
+### Monorepo Completo
+
 ```
 Autodidaktos (Monorepo)
-├── backend/                    # Node.js + Express + Prisma
-│   ├── src/modules/            # Features separadas
-│   ├── prisma/                 # Schema + migrations
-│   └── tests/                  # Jest + integration tests
+├── backend/                    # Node.js + Express + TypeScript + Jest
+│   └── (estrutura acima)
 │
 ├── frontend/                   # Next.js refatorado
 │   ├── app/                    # App router
@@ -77,33 +124,62 @@ Autodidaktos (Monorepo)
 │       └── aws-clf-c02/        # MVP: AWS CLF-C02
 │           ├── metadata.json
 │           ├── 01-intro/
+│           │   ├── content.md
+│           │   ├── quiz.json
+│           │   └── flashcards.json
 │           ├── 02-compute/
 │           └── ...
 │
-├── docker-compose.yml          # Desenvolvimento local
-└── .github/workflows/          # GitHub Actions (CI/CD)
-    └── sync-content.yml        # PR → S3 sync
+├── docs/                       # Documentação da série
+│   ├── TIMELINE_ROADMAP.md
+│   ├── ESCOPO_FINAL_DEFINITIVO.md
+│   └── ...
+│
+├── docker-compose.yml          # Desenvolvimento local (principal)
+├── .github/
+│   └── workflows/
+│       ├── sync-content.yml    # PR → S3 sync
+│       └── ci-backend.yml      # CI/CD do backend
+│
+├── README.md                   # Este arquivo
+└── LICENSE
 ```
+
+### Filosofia: Simplicidade para IA
+
+A estrutura é **intencionalmente simplista** para facilitar desenvolvimento com IA:
+
+✅ **Nomes claros** - Controllers, Usecases, Entities
+✅ **Sem abstrações desnecessárias** - Sem injeção de dependência complexa
+✅ **Escalável** - Fácil adicionar novos controllers/usecases
+✅ **Testável** - Estrutura clara facilita testes
+✅ **IA-Friendly** - Código simples para gerar com prompts diretos
+
+Veja episódios da série sobre como usar IA no desenvolvimento! 📺
 
 ### Stack Tecnológico
 
 **Backend:**
-- Node.js 18+ + Express
-- TypeScript
+- Node.js 18+ + Express.js
+- TypeScript (type-safe)
 - Prisma ORM + PostgreSQL
-- JWT + OAuth (GitHub)
-- AWS SDK (S3)
+- Winston (logging profissional)
+- Jest + Supertest (testes)
+- JWT + OAuth2 (GitHub)
+- AWS SDK v3 (S3)
+- Octokit (GitHub API)
 
 **Frontend:**
 - Next.js (refatorado)
 - React + Tailwind
 - (em desenvolvimento)
 
-**Infra:**
+**Infra & DevOps:**
 - PostgreSQL 14+
-- AWS S3 + CloudFront
+- AWS S3 + CloudFront CDN
 - Docker + Docker Compose
 - GitHub Actions (CI/CD)
+- Winston Daily Rotate (log rotation)
 
 ---
 
@@ -224,12 +300,72 @@ git push origin feat/novo-modulo
 
 ---
 
+## 🤖 Desenvolvendo com Claude Code
+
+Este projeto foi construído **com IA** e é otimizado para desenvolvimento **assistido por IA**.
+
+### Por que essa estrutura?
+
+A estrutura **intencionalmente simplista** facilita:
+- ✅ Gerar novos controllers com prompts simples
+- ✅ Adicionar usecases mantendo consistência
+- ✅ Criar entidades/DTOs rapidamente
+- ✅ Escrever testes sem boilerplate
+- ✅ Integrar com Prisma/AWS/GitHub sem complexidade
+
+**Veja na série de vídeos como usar IA no desenvolvimento!** 📺
+
+### Prompts Disponíveis
+
+Todos os prompts estão em `/docs/`:
+
+- `PROMPT-CLAUDE-CODE.md` - Gerar projeto completo do zero
+- `PROMPT-LOGGER.md` - Adicionar logger profissional
+
+### Exemplo: Criar Nova Feature
+
+```
+Crie um controller UserController para:
+- GET /api/users/:id → Retornar usuário por ID
+- POST /api/users → Criar novo usuário
+- PATCH /api/users/:id → Atualizar usuário
+
+Estrutura esperada:
+- Arquivo: src/app/controllers/user.controller.ts
+- Métodos: getById(), create(), update()
+- Usar logger para registrar operações
+- Validar entrada com try/catch
+- Retornar resposta padronizada
+
+Gere o código completo!
+```
+
+Passos:
+1. Abra Claude Code
+2. Cole o prompt acima
+3. Gere o código
+4. Copie pra `src/app/controllers/user.controller.ts`
+5. Crie a rota em `src/app/routes/`
+6. Pronto!
+
+### Boas Práticas com IA
+
+✅ **Ser específico** - Descrever exatamente o que quer
+✅ **Referenciar estrutura** - Mencionar pastas esperadas
+✅ **Usar padrões existentes** - Mencionar Controllers/Usecases já criados
+✅ **Pedir validação** - "Valide entrada", "Trate erros"
+✅ **Incluir logging** - "Use logger.info/error"
+✅ **Testes** - "Gere testes com Jest"
+
+---
+
 ## 📋 Variáveis de Ambiente
 
 ```env
 # Backend
 NODE_ENV=development
 PORT=3000
+LOG_LEVEL=debug
 
 # Database
 DATABASE_URL=postgresql://user:password@localhost:5432/autodidaktos_dev
@@ -257,7 +393,107 @@ NEXT_PUBLIC_API_URL=http://localhost:3000
 
 ---
 
-## 🧪 Testes
+## 📝 Sistema de Logging Profissional
+
+O projeto usa **Winston** com configuração profissional:
+
+### Níveis de Log
+
+```
+fatal  → Erros críticos que derrubam a app
+error  → Erros que precisam atenção
+warn   → Alertas (dados inválidos, falhas esperadas)
+info   → Eventos importantes (servidor iniciado, user criado)
+http   → Requisições HTTP
+debug  → Informações de debug
+trace  → Detalhes muito específicos
+```
+
+### Saída de Logs
+
+**Development (Console colorido):**
+```
+2024-04-22 10:30:15 INFO    🚀 Server running on port 3000
+2024-04-22 10:30:16 HTTP    GET /api/health { status: 200, duration: '2ms' }
+2024-04-22 10:30:17 DEBUG   HealthCheck requested { userAgent: 'Mozilla/5.0' }
+2024-04-22 10:30:18 ERROR   Database connection failed
+```
+
+**Production (JSON estruturado em arquivos):**
+```json
+{"timestamp":"2024-04-22 10:30:15","level":"info","message":"Server running"}
+{"timestamp":"2024-04-22 10:30:16","level":"http","method":"GET","path":"/api/health","status":200}
+```
+
+### Arquivos de Log (Rotacionados)
+
+```
+logs/
+├── error-2024-04-22.log      # Apenas erros (14 dias de retenção)
+├── app-2024-04-22.log        # Todos os logs (7 dias)
+└── http-2024-04-22.log       # HTTP requests (3 dias)
+```
+
+### Usar Logger no Código
+
+```typescript
+import { logger } from '../infra/logging/logger';
+
+// Em controladores
+export class UserController {
+  async create(req: Request, res: Response) {
+    logger.info('Creating user', { email: req.body.email });
+    
+    try {
+      const user = await createUserUsecase.execute(req.body);
+      logger.info('User created', { userId: user.id });
+      res.json(user);
+    } catch (error) {
+      logger.error('Failed to create user', error, { email: req.body.email });
+      res.status(400).json({ error: error.message });
+    }
+  }
+}
+
+// Em usecases
+export class CreateUserUsecase {
+  async execute(data) {
+    logger.debug('Validating user data', { email: data.email });
+    
+    if (!data.email) {
+      logger.warn('User creation with invalid email', { data });
+      throw new Error('Invalid email');
+    }
+
+    const user = await prisma.user.create({ data });
+    logger.info('User persisted to database', { userId: user.id });
+    return user;
+  }
+}
+
+// Para requisições HTTP
+logger.http('POST /api/users', {
+  status: 201,
+  duration: '45ms',
+  userId: user.id
+});
+```
+
+### Configuração
+
+Arquivo `.env`:
+```env
+NODE_ENV=development
+LOG_LEVEL=debug
+```
+
+Logs automáticos:
+- ✅ Middleware HTTP loga todas as requisições
+- ✅ Erros não tratados são capturados
+- ✅ Stack traces de exceptions
+- ✅ Não loga health checks (reduz ruído)
+
+---
 
 ```bash
 cd backend
@@ -400,18 +636,19 @@ pm2 start dist/index.js --name autodidaktos
 
 ---
 
-## 📞 Comunidade
+## 📞 Comunidade & Redes Sociais
 
 - 💬 **Discussions:** GitHub Discussions
 - 🐛 **Bugs:** Issues com label `bug`
 - 💡 **Ideias:** Issues com label `enhancement`
-- 📧 **Email:** seu-email@exemplo.com (opcional)
+- 📧 **LinkedIn:** [Paulo Abreu | LinkedIn](https://linkedin.com/in/paulo-abreu)
+- 📺 **YouTube:** [Calvo Dev](https://youtube.com/@CalvoDev)
 
 ---
 
 ## 📝 Licença
 
-MIT © 2024 Paulo - Veja [LICENSE](./LICENSE)
+MIT © 2026 Paulo Abreu (Calvo Dev) - Veja [LICENSE](./LICENSE)
 
 ---
 
@@ -427,7 +664,8 @@ Se você achou útil, considere:
 
 ## 🎬 Veja Também
 
-- [Série de Vídeos](https://youtube.com/@calvodev)
+- [Série de Vídeos](https://youtube.com/@CalvoDev)
+- [LinkedIn - Paulo Abreu](https://linkedin.com/in/paulo-abreu)
 - [Documentação Técnica](./docs/)
 - [Roadmap](./docs/TIMELINE_ROADMAP.md)
 - [Escopo Completo](./docs/ESCOPO_FINAL_DEFINITIVO.md)
